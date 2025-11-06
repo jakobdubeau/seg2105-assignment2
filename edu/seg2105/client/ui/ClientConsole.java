@@ -123,9 +123,8 @@ public class ClientConsole implements ChatIF
     String host = "";
     int port = 0;
 
-    // Check if loginID is provided (mandatory)
     if (args.length == 0) {
-      System.out.println("ERROR - No login ID specified. Connection aborted.");
+      System.out.println("No login ID specified");
       System.exit(1);
     }
 
