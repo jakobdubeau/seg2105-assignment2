@@ -47,8 +47,8 @@ public class ServerConsole implements ChatIF
           handleCommand(message);
         }
         else {
-          display("SERVER MSG> " + message);
-          server.sendToAllClients("SERVER MSG> " + message);
+          display("SERVER MESSAGE> " + message);
+          server.sendToAllClients("SERVER MESSAGE> " + message);
         }
       }
     }
