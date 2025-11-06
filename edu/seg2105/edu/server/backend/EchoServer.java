@@ -4,6 +4,7 @@ package edu.seg2105.edu.server.backend;
 // license found at www.lloseng.com 
 
 
+import edu.seg2105.client.common.ChatIF;
 import ocsf.server.*;
 
 /**
@@ -18,7 +19,9 @@ import ocsf.server.*;
 public class EchoServer extends AbstractServer 
 {
   //Class variables *************************************************
-  
+	
+  ChatIF serverUI;
+ 
   /**
    * The default port to listen on.
    */
@@ -31,10 +34,16 @@ public class EchoServer extends AbstractServer
    *
    * @param port The port number to connect on.
    */
-  public EchoServer(int port) 
+  public EchoServer(int port, ChatIF serverUI) 
   {
     super(port);
+    this.serverUI = serverUI;
   }
+  
+  public EchoServer(int port) {
+	  super(port);
+	}
+
 
   
   //Instance methods ************************************************
@@ -79,10 +88,10 @@ public class EchoServer extends AbstractServer
 
   @Override
   synchronized protected void clientDisconnected(ConnectionToClient client) {
-	  System.out.println(client + " Has disconnected.");
 	  super.clientDisconnected(client);
+	  System.out.println(client + " Has disconnected.");
   }
-
+  
   @Override
   synchronized protected void clientException(ConnectionToClient client, Throwable exception) {
 	  System.out.println(client.getInetAddress() + " has disconnected.");
