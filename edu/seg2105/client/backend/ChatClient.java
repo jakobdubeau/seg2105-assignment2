@@ -21,28 +21,35 @@ import edu.seg2105.client.common.*;
 public class ChatClient extends AbstractClient
 {
   //Instance variables **********************************************
-  
+
   /**
-   * The interface type variable.  It allows the implementation of 
+   * The interface type variable.  It allows the implementation of
    * the display method in the client.
    */
-  ChatIF clientUI; 
+  ChatIF clientUI;
 
-  
+  /**
+   * The login ID of the client.
+   */
+  String loginID;
+
+
   //Constructors ****************************************************
   
   /**
    * Constructs an instance of the chat client.
    *
+   * @param loginID The login ID of the client.
    * @param host The server to connect to.
    * @param port The port number to connect on.
    * @param clientUI The interface type variable.
    */
-  
-  public ChatClient(String host, int port, ChatIF clientUI) 
-    throws IOException 
+
+  public ChatClient(String loginID, String host, int port, ChatIF clientUI)
+    throws IOException
   {
     super(host, port); //Call the superclass constructor
+    this.loginID = loginID;
     this.clientUI = clientUI;
     openConnection();
   }
@@ -152,9 +159,6 @@ public class ChatClient extends AbstractClient
 	  else if (command.equals("#getport")) {
 		  clientUI.display("Current port: " + getPort());
 	  }
-	  else {
-		  
-	  }
   }
   
   /**
@@ -192,6 +196,19 @@ public class ChatClient extends AbstractClient
   	@Override
 	protected void connectionClosed() {
   		clientUI.display("Connection closed");
+	}
+
+	/**
+	 * Implements the hook method called after a connection has been established.
+	 * Sends the login ID to the server.
+	 */
+	@Override
+	protected void connectionEstablished() {
+		try {
+			sendToServer("#login " + loginID);
+		} catch (IOException e) {
+			clientUI.display("Could not send login ID to server.");
+		}
 	}
 }
 //End of ChatClient class
