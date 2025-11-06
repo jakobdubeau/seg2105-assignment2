@@ -71,7 +71,12 @@ public class ChatClient extends AbstractClient
   {
     try
     {
-      sendToServer(message);
+      if (message.startsWith("#")) {
+    	  handleCommand(message);
+      }
+      else {
+    	  sendToServer(message);
+      }
     }
     catch(IOException e)
     {
@@ -79,6 +84,77 @@ public class ChatClient extends AbstractClient
         ("Could not send message to server.  Terminating client.");
       quit();
     }
+  }
+  
+  private void handleCommand(String command) {
+	  if (command.equals("#quit")) {
+		  quit();
+	  }
+	  else if (command.equals("#logoff")) {
+		  try
+		    {
+		      closeConnection();
+		    }
+		    catch(IOException e) {}
+	  }
+	  else if (command.startsWith("#sethost")) {
+		  if (isConnected()) {
+			  clientUI.display("Client needs to be logged off first");
+		  }
+		  else {
+			  String[] parts = command.split(" ", 2);
+		        if (parts.length > 1) {
+		            setHost(parts[1]);
+		            clientUI.display("Host set to " + parts[1]);
+		        } 
+		        else {
+		            clientUI.display("Usage: #sethost <host>");
+		        }
+		  }
+	  }
+	  else if (command.startsWith("#setport")) {
+		  if (isConnected()) {
+			  clientUI.display("Client needs to be logged off first");
+		  }
+		  else {
+			  String[] parts = command.split(" ", 2);
+		        if (parts.length > 1) {
+		            try {
+		                int port = Integer.parseInt(parts[1]);
+		                setPort(port);
+		                clientUI.display("Port set to " + port);
+		            } 
+		            catch (NumberFormatException e) {
+		                clientUI.display("Invalid port number.");
+		            }
+		        } 
+		        else {
+		            clientUI.display("Usage: #setport <port>");
+		        }
+		  }
+	  }
+	  else if (command.equals("#login")) {
+		  if (isConnected()) {
+			  clientUI.display("Client is already connected");
+		  }
+		  else {
+			  try {
+				  openConnection();
+			  }
+			  catch(IOException e) {
+				  clientUI.display("Client could not connect");
+			  }
+		  }
+	  }
+	  else if (command.equals("#gethost")) {
+		  clientUI.display("Current host: " + getHost());
+	  }
+	  else if (command.equals("#getport")) {
+		  clientUI.display("Current port: " + getPort());
+	  }
+	  else {
+		  
+	  }
   }
   
   /**
