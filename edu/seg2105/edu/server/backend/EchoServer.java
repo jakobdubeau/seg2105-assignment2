@@ -3,6 +3,7 @@ package edu.seg2105.edu.server.backend;
 // "Object Oriented Software Engineering" and is issued under the open-source
 // license found at www.lloseng.com 
 
+import java.io.*;
 
 import edu.seg2105.client.common.ChatIF;
 import ocsf.server.*;
@@ -54,11 +55,46 @@ public class EchoServer extends AbstractServer
    * @param msg The message received from the client.
    * @param client The connection from which the message originated.
    */
-  public void handleMessageFromClient
-    (Object msg, ConnectionToClient client)
+  public void handleMessageFromClient(Object msg, ConnectionToClient client)
   {
-    System.out.println("Message received: " + msg + " from " + client);
-    this.sendToAllClients(msg);
+    String message = msg.toString();
+
+    if (message.startsWith("#login "))
+    {
+      if (client.getInfo("loginID") != null)
+      {
+        try
+        {
+          client.sendToClient("Already logged in");
+          client.close();
+        }
+        catch (IOException e) {}
+      }
+      else
+      {
+        String loginID = message.substring(7);
+        client.setInfo("loginID", loginID);
+        System.out.println(loginID + " has logged on.");
+      }
+    }
+    else
+    {
+      if (client.getInfo("loginID") == null)
+      {
+        try
+        {
+          client.sendToClient("Must login first");
+          client.close();
+        }
+        catch (IOException e) {}
+      }
+      else
+      {
+        String loginID = (String) client.getInfo("loginID");
+        System.out.println("Message received: " + message + " from " + loginID);
+        this.sendToAllClients(loginID + "> " + message);
+      }
+    }
   }
     
   /**
